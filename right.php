@@ -1,60 +1,46 @@
 <?php
-
-interface IFiles
+trait TAdapter
 {
-    public function createFile(string $file);
+    public function sum($a, $b)
+    {
+        $method = $this->method;
+        return $this->$method($a, $b);
+    }
 }
 
-class ZipFile implements IFiles
+class First
 {
-    public string $file;
+    use TAdapter;
+    public $method = 'first_sum';
 
-    public function createFile(string $file): void
+    public function first_sum($a, $b): int
     {
-        $this->file = "$file.zip";
+        return $a + $b;
     }
 }
 
-class TarGzFile implements IFiles
+class Second
 {
-    public string $file;
+    use TAdapter;
+    public $method = 'second_sum';
 
-    public function createFile(string $file): void
+    public function second_sum($a, $b): int
     {
-        $this->file = "$file.tar.gz";
+        return $a + $b;
     }
 }
 
-class ContextFiles
-{
-    private IFiles $strategy;
+$result = new First();
+echo $result->sum(5, 5);
 
-    public function __construct(IFiles $strategy)
-    {
-        $this->strategy = $strategy;
-    }
+echo PHP_EOL;
 
-    public function create(string $file)
-    {
-        $this->strategy->createFile($file);
-    }
+$result2 = new Second();
+echo $result2->sum(10, 10);
 
-    public function showFile(): string
-    {
-        return $this->strategy->file;
-    }
-}
+echo PHP_EOL;
 
-if (strstr($_SERVER["HTTP_USER_AGENT"], "Win")) {
-    $obj = new ContextFiles(new ZipFile());
-} else {
-    $obj = new ContextFiles(new TarGzFile());
-}
-
-$obj->create('newFile');
-echo $obj->showFile();
 
 /*
- * Благодаря шаблону проектирования 'Стратегия' код не повторяется, а так же можно использывать одну и ту же переменную для создания обьекта.
- * И по сколько вызывается один и тот же обьект методы будут одинаковые. В конструктор одного и того же обьекта передается обьект других классов.
+ * Благодаря шаблону проектирования Адаптер (Adapter) при вызове двух разных обьектов можно вызвать общий метод для обоих классов.
  */

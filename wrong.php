@@ -1,54 +1,32 @@
 <?php
-interface IFiles
+
+class First
 {
-    public function createFile(string $file);
-    public function showFile();
+    public function first_sum($a, $b): int
+    {
+        return $a + $b;
+    }
 }
 
-class ZipFile implements IFiles
+class Second
 {
-    private string $file;
-
-    public function createFile(string $file): void
+    public function second_sum($a, $b): int
     {
-        $this->file = "$file.zip";
-    }
-
-    public function showFile(): string
-    {
-        return $this->file;
+        return $a + $b;
     }
 }
 
-class TarGzFile implements IFiles
-{
-    private string $file;
+$result = new First();
+echo $result->first_sum(5, 5);
 
-    public function createFile(string $file): void
-    {
-        $this->file = "$file.tar.gz";
-    }
+echo PHP_EOL;
 
-    public function showFile(): string
-    {
-        return $this->file;
-    }
-}
+$result2 = new Second();
+echo $result2->second_sum(10, 10);
 
-if (strstr($_SERVER["HTTP_USER_AGENT"], "Win")) {
-    $obj1 = new ZipFile();
-    $obj1->createFile('newFile1');
-    echo $obj1->showFile();
-} else {
-    $obj2 = new TarGzFile();
-    $obj2->createFile('newFile2');
-    echo $obj2->showFile();
-}
+echo PHP_EOL;
 
 /*
- * Проблема данного кода в том, что код повторяется и что бы это проблему решить нужно использывать шаблон проектирования Cтратегия (Strategy).
-*/
-
-
-
-
+ * Проблема данного кода в том, что есть два класа с одинаковыми методами но названия при этом разные,
+ * а хотело бы что бы у этих методов было общее название, для этого можно использывать паттерн Адаптер (Adapter)
+ */
