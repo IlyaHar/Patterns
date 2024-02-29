@@ -1,60 +1,66 @@
 <?php
 
-interface IFiles
+abstract class Button
 {
-    public function createFile(string $file);
+    protected string $html;
+    public function getHtml(): string
+    {
+        return $this->html;
+    }
 }
 
-class ZipFile implements IFiles
+class InputButton extends Button
 {
-    public string $file;
-
-    public function createFile(string $file): void
-    {
-        $this->file = "$file.zip";
-    }
+    protected string $html = "<input type='submit' value='InputButton' />";
 }
 
-class TarGzFile implements IFiles
+class DivButton  extends Button
 {
-    public string $file;
-
-    public function createFile(string $file): void
-    {
-        $this->file = "$file.tar.gz";
-    }
+    protected string $html = "<div>DivButton</div>";
 }
 
-class ContextFiles
+class FlashButton extends Button
 {
-    private IFiles $strategy;
+    protected string $html = "<button>FlashButton</button>";
+}
 
-    public function __construct(IFiles $strategy)
-    {
-        $this->strategy = $strategy;
-    }
+class RedButton  extends Button
+{
+    protected string $html = "<input type='submit' value='InputButton' style='background: red' />";
+}
 
-    public function create(string $file)
-    {
-        $this->strategy->createFile($file);
-    }
+class GreenButton extends Button
+{
+    protected string $html = "<button  style='background: green'>FlashButton</button>";
+}
 
-    public function showFile(): string
+
+class FactoryButton
+{
+    public static function create(string $type): object
     {
-        return $this->strategy->file;
+        $base = 'Button';
+        $target = ucfirst($type) . $base;
+
+        if (class_exists($target) && is_subclass_of($target, $base)) {
+            return new $target;
+        } else {
+            throw new Exception('Вы ввели не корректные данные');
+        }
     }
 }
 
-if (strstr($_SERVER["HTTP_USER_AGENT"], "Win")) {
-    $obj = new ContextFiles(new ZipFile());
-} else {
-    $obj = new ContextFiles(new TarGzFile());
+$buttons = ['div', 'flash', 'input', 'red', 'green'];
+
+foreach ($buttons as $button) {
+    echo FactoryButton::create($button)->getHtml();
+    echo PHP_EOL ;
 }
 
-$obj->create('newFile');
-echo $obj->showFile();
+//echo FactoryButton::create('green')->getHtml();
+
 
 /*
- * Благодаря шаблону проектирования 'Стратегия' код не повторяется, а так же можно использывать одну и ту же переменную для создания обьекта.
- * И по сколько вызывается один и тот же обьект методы будут одинаковые. В конструктор одного и того же обьекта передается обьект других классов.
+ * Благодаря паттерну Фабричный метод (Factory Method) не нужно для каждого класса создавать отдельный обьект,
+ * За счет класса FactoryMethod можно создать лишь один обьект. И при этом создать много различных обьектов.
  */

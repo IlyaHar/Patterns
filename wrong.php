@@ -1,54 +1,46 @@
 <?php
-interface IFiles
+
+abstract class Button
 {
-    public function createFile(string $file);
-    public function showFile();
+    protected string $html;
+    public function getHtml(): string
+    {
+        return $this->html;
+    }
 }
 
-class ZipFile implements IFiles
+class InputButton extends Button
 {
-    private string $file;
-
-    public function createFile(string $file): void
-    {
-        $this->file = "$file.zip";
-    }
-
-    public function showFile(): string
-    {
-        return $this->file;
-    }
+    protected string $html = "<input type='submit' value='InputButton' />";
 }
 
-class TarGzFile implements IFiles
+class DivButton  extends Button
 {
-    private string $file;
-
-    public function createFile(string $file): void
-    {
-        $this->file = "$file.tar.gz";
-    }
-
-    public function showFile(): string
-    {
-        return $this->file;
-    }
+    protected string $html = "<div>DivButton</div>";
 }
 
-if (strstr($_SERVER["HTTP_USER_AGENT"], "Win")) {
-    $obj1 = new ZipFile();
-    $obj1->createFile('newFile1');
-    echo $obj1->showFile();
-} else {
-    $obj2 = new TarGzFile();
-    $obj2->createFile('newFile2');
-    echo $obj2->showFile();
+class FlashButton extends Button
+{
+    protected string $html = "<button>FlashButton</button>";
 }
+
+$inputButton = new InputButton();
+echo $inputButton->getHtml();
+
+echo PHP_EOL;
+
+$divButton = new DivButton();
+echo $divButton->getHtml();
+
+echo PHP_EOL;
+
+$flashButton = new FlashButton();
+echo $flashButton->getHtml();
+
+echo PHP_EOL;
 
 /*
- * Проблема данного кода в том, что код повторяется и что бы это проблему решить нужно использывать шаблон проектирования Cтратегия (Strategy).
-*/
-
-
-
-
+ * Казалось бы вроде бы все отлично кнопки создаются и все супер, но если представить что таких кнопок может быть еще 10,
+ * то для каждой кнопки нужно будет создавать обьект и выводить ее и получится очень много кода...
+ * Что бы решить данную проблему, можно использывать шаблон проектирования Фабричный Метод (Factory Method)
+ */
