@@ -1,32 +1,46 @@
 <?php
 
-class First
+abstract class Button
 {
-    public function first_sum($a, $b): int
+    protected string $html;
+    public function getHtml(): string
     {
-        return $a + $b;
+        return $this->html;
     }
 }
 
-class Second
+class InputButton extends Button
 {
-    public function second_sum($a, $b): int
-    {
-        return $a + $b;
-    }
+    protected string $html = "<input type='submit' value='InputButton' />";
 }
 
-$result = new First();
-echo $result->first_sum(5, 5);
+class DivButton  extends Button
+{
+    protected string $html = "<div>DivButton</div>";
+}
+
+class FlashButton extends Button
+{
+    protected string $html = "<button>FlashButton</button>";
+}
+
+$inputButton = new InputButton();
+echo $inputButton->getHtml();
 
 echo PHP_EOL;
 
-$result2 = new Second();
-echo $result2->second_sum(10, 10);
+$divButton = new DivButton();
+echo $divButton->getHtml();
+
+echo PHP_EOL;
+
+$flashButton = new FlashButton();
+echo $flashButton->getHtml();
 
 echo PHP_EOL;
 
 /*
- * Проблема данного кода в том, что есть два класа с одинаковыми методами но названия при этом разные,
- * а хотело бы что бы у этих методов было общее название, для этого можно использывать паттерн Адаптер (Adapter)
+ * Казалось бы вроде бы все отлично кнопки создаются и все супер, но если представить что таких кнопок может быть еще 10,
+ * то для каждой кнопки нужно будет создавать обьект и выводить ее и получится очень много кода...
+ * Что бы решить данную проблему, можно использывать шаблон проектирования Фабричный Метод (Factory Method)
  */

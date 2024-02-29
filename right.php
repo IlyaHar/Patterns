@@ -1,46 +1,66 @@
 <?php
-trait TAdapter
+
+abstract class Button
 {
-    public function sum(int $a, int $b): int
+    protected string $html;
+    public function getHtml(): string
     {
-        $method = $this->method;
-        return $this->$method($a, $b);
+        return $this->html;
     }
 }
 
-class First
+class InputButton extends Button
 {
-    use TAdapter;
-    public string $method = 'first_sum';
+    protected string $html = "<input type='submit' value='InputButton' />";
+}
 
-    public function first_sum(int $a, int $b): int
+class DivButton  extends Button
+{
+    protected string $html = "<div>DivButton</div>";
+}
+
+class FlashButton extends Button
+{
+    protected string $html = "<button>FlashButton</button>";
+}
+
+class RedButton  extends Button
+{
+    protected string $html = "<input type='submit' value='InputButton' style='background: red' />";
+}
+
+class GreenButton extends Button
+{
+    protected string $html = "<button  style='background: green'>FlashButton</button>";
+}
+
+
+class FactoryButton
+{
+    public static function create(string $type): object
     {
-        return $a + $b;
+        $base = 'Button';
+        $target = ucfirst($type) . $base;
+
+        if (class_exists($target) && is_subclass_of($target, $base)) {
+            return new $target;
+        } else {
+            throw new Exception('Вы ввели не корректные данные');
+        }
     }
 }
 
-class Second
-{
-    use TAdapter;
-    public $method = 'second_sum';
+$buttons = ['div', 'flash', 'input', 'red', 'green'];
 
-    public function second_sum(int $a, int $b): int
-    {
-        return $a + $b;
-    }
+foreach ($buttons as $button) {
+    echo FactoryButton::create($button)->getHtml();
+    echo PHP_EOL ;
 }
 
-$result = new First();
-echo $result->sum(5, 5);
-
-echo PHP_EOL;
-
-$result2 = new Second();
-echo $result2->sum(10, 10);
-
-echo PHP_EOL;
+//echo FactoryButton::create('green')->getHtml();
 
 
 /*
- * Благодаря шаблону проектирования Адаптер (Adapter) при вызове двух разных обьектов можно вызвать общий метод для обоих классов.
+ * Благодаря паттерну Фабричный метод (Factory Method) не нужно для каждого класса создавать отдельный обьект,
+ * За счет класса FactoryMethod можно создать лишь один обьект. И при этом создать много различных обьектов.
  */
