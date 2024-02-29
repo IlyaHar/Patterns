@@ -1,7 +1,7 @@
 <?php
 trait TAdapter
 {
-    public function sum($a, $b)
+    public function sum(int $a, int $b): int
     {
         $method = $this->method;
         return $this->$method($a, $b);
@@ -11,9 +11,9 @@ trait TAdapter
 class First
 {
     use TAdapter;
-    public $method = 'first_sum';
+    public string $method = 'first_sum';
 
-    public function first_sum($a, $b): int
+    public function first_sum(int $a, int $b): int
     {
         return $a + $b;
     }
@@ -24,7 +24,7 @@ class Second
     use TAdapter;
     public $method = 'second_sum';
 
-    public function second_sum($a, $b): int
+    public function second_sum(int $a, int $b): int
     {
         return $a + $b;
     }
